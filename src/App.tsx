@@ -1,13 +1,15 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
+import ProductCatalog from './pages/ProductCatalog'
 
 function App() {
-
-
   return (
-    <>
-    <LoginPage />
-       
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/ProductCatalog" element={<ProductCatalog />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

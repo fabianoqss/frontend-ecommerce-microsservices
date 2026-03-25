@@ -18,29 +18,26 @@ function LoginPage() {
       className="min-h-screen bg-[#f2f2f2] text-[#263238]"
       style={{ fontFamily: "'Open Sans', sans-serif" }}
     >
-      {/* ── Navbar ── */}
       <nav className="bg-[#407bff] h-[70px] flex items-center px-10">
         <span className="text-white font-bold text-2xl tracking-[-0.36px]">
           DS Catalog
         </span>
         <div className="ml-auto flex items-center gap-10 text-lg">
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
+          <a href="#" className="text-white font-bold">
             HOME
           </a>
           <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
             CATÁLOGO
           </a>
-          <a href="#" className="text-white font-bold">
+          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
             ADMIN
           </a>
         </div>
       </nav>
 
-      {/* ── Content ── */}
       <div className="flex items-center justify-between gap-12 px-[140px] py-12 min-h-[calc(100vh-70px)]">
 
-        {/* Left: marketing + illustration */}
-        <div className="flex-1 max-w-[700px]">
+        <div className="flex-1 max-w-[700px] flex flex-col items-center text-center">
           <h1 className="text-[#263238] text-[55px] font-bold leading-tight tracking-[-0.825px] max-w-[647px] mb-6">
             Divulgue seus produtos no DS Catalog
           </h1>
@@ -48,13 +45,12 @@ function LoginPage() {
             Faça parte do nosso catálogo de divulgação e aumente a venda dos seus produtos.
           </p>
           <img
-            src={imgIllustration}
+            src="/assets/DesenhoLogin.svg"
             alt="Ilustração DS Catalog"
-            className="w-full max-w-[560px] object-contain"
+            className="w-full max-w-[400px] object-contain mx-auto block"
           />
         </div>
 
-        {/* Right: login card */}
         <div className="bg-white rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[551px] shrink-0 py-16 px-[50px] flex flex-col items-center">
 
           <h2 className="text-[#263238] text-[48px] tracking-[-0.72px] font-normal mb-10">
@@ -75,7 +71,6 @@ function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div className="border border-[#e1e1e1] rounded-[10px] px-5 py-[14px]">
               <input
                 id="password"

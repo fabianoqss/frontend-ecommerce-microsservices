@@ -1,7 +1,6 @@
 import { useState, type FormEventHandler } from 'react'
 
-// Figma illustration assets (valid for 7 days)
-const imgIllustration = 'https://www.figma.com/api/mcp/asset/1cdc3c4c-44ba-4768-bd14-9f04b4bb9e7c'
+
 const imgArrow = 'https://www.figma.com/api/mcp/asset/17bbadf7-8042-4dab-892a-1384bf53a18e'
 
 function LoginPage() {

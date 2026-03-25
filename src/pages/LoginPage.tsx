@@ -1,97 +1,126 @@
 import { useState, type FormEventHandler } from 'react'
 
+// Figma illustration assets (valid for 7 days)
+const imgIllustration = 'https://www.figma.com/api/mcp/asset/1cdc3c4c-44ba-4768-bd14-9f04b4bb9e7c'
+const imgArrow = 'https://www.figma.com/api/mcp/asset/17bbadf7-8042-4dab-892a-1384bf53a18e'
+
 function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault()
-
-    console.log('Login data:', { email, password, rememberMe })
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault()
+    console.log('Login:', { email, password })
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-8">
-      <section className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-xl shadow-slate-950/50">
-        <header className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-white">Entrar</h1>
-          <p className="mt-2 text-sm text-slate-400">
-            Acesse sua conta para continuar.
+    <div
+      className="min-h-screen bg-[#f2f2f2] text-[#263238]"
+      style={{ fontFamily: "'Open Sans', sans-serif" }}
+    >
+      {/* ── Navbar ── */}
+      <nav className="bg-[#407bff] h-[70px] flex items-center px-10">
+        <span className="text-white font-bold text-2xl tracking-[-0.36px]">
+          DS Catalog
+        </span>
+        <div className="ml-auto flex items-center gap-10 text-lg">
+          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
+            HOME
+          </a>
+          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
+            CATÁLOGO
+          </a>
+          <a href="#" className="text-white font-bold">
+            ADMIN
+          </a>
+        </div>
+      </nav>
+
+      {/* ── Content ── */}
+      <div className="flex items-center justify-between gap-12 px-[140px] py-12 min-h-[calc(100vh-70px)]">
+
+        {/* Left: marketing + illustration */}
+        <div className="flex-1 max-w-[700px]">
+          <h1 className="text-[#263238] text-[55px] font-bold leading-tight tracking-[-0.825px] max-w-[647px] mb-6">
+            Divulgue seus produtos no DS Catalog
+          </h1>
+          <p className="text-[#9e9e9e] text-2xl tracking-[-0.36px] max-w-[516px] mb-8">
+            Faça parte do nosso catálogo de divulgação e aumente a venda dos seus produtos.
           </p>
-        </header>
+          <img
+            src={imgIllustration}
+            alt="Ilustração DS Catalog"
+            className="w-full max-w-[560px] object-contain"
+          />
+        </div>
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <div>
-            <label
-              className="mb-2 block text-sm font-medium text-slate-200"
-              htmlFor="email"
-            >
-              E-mail
-            </label>
-            <input
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30"
-              id="email"
-              name="email"
-              placeholder="voce@exemplo.com"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-          </div>
+        {/* Right: login card */}
+        <div className="bg-white rounded-[20px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[551px] shrink-0 py-16 px-[50px] flex flex-col items-center">
 
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <label
-                className="block text-sm font-medium text-slate-200"
-                htmlFor="password"
+          <h2 className="text-[#263238] text-[48px] tracking-[-0.72px] font-normal mb-10">
+            LOGIN
+          </h2>
+
+          <form className="w-full space-y-5" onSubmit={handleSubmit}>
+            {/* Email */}
+            <div className="border border-[#e1e1e1] rounded-[10px] px-5 py-[14px]">
+              <input
+                id="email"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
+                required
+              />
+            </div>
+
+            {/* Password */}
+            <div className="border border-[#e1e1e1] rounded-[10px] px-5 py-[14px]">
+              <input
+                id="password"
+                type="password"
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
+                required
+              />
+            </div>
+
+            {/* Forgot password */}
+            <div className="text-right">
+              <a
+                href="#"
+                className="text-[#407bff] text-[18px] tracking-[-0.27px] hover:underline"
               >
-                Senha
-              </label>
-              <a className="text-sm text-sky-400 hover:text-sky-300" href="#">
-                Esqueci minha senha
+                Esqueci a senha?
               </a>
             </div>
-            <input
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30"
-              id="password"
-              name="password"
-              placeholder="Digite sua senha"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </div>
 
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
-            <input
-              className="h-4 w-4 rounded border-slate-600 bg-slate-950 text-sky-500"
-              name="rememberMe"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(event) => setRememberMe(event.target.checked)}
-            />
-            Lembrar de mim
-          </label>
+            {/* Submit */}
+            <button
+              type="submit"
+              className="relative w-full bg-[#407bff] hover:bg-[#3068e0] active:bg-[#2558c8] transition-colors rounded-[10px] h-[62px] flex items-center justify-center text-white font-bold text-2xl tracking-[-0.36px] mt-4"
+            >
+              LOGAR
+              <div className="absolute right-0 top-0 bottom-0 w-[62px] bg-[rgba(38,50,56,0.5)] rounded-r-[10px] flex items-center justify-center">
+                <img src={imgArrow} alt="" className="w-5 h-5" />
+              </div>
+            </button>
+          </form>
 
-          <button
-            className="w-full rounded-lg bg-sky-600 px-4 py-3 font-medium text-white transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
-            type="submit"
-          >
-            Entrar
-          </button>
-        </form>
+          {/* Register */}
+          <p className="mt-8 text-[18px] font-bold tracking-[-0.27px] text-center">
+            <span className="text-[#9e9e9e]">Não tem Cadastro? </span>
+            <a href="#" className="text-[#407bff] underline hover:text-[#3068e0]">
+              CADASTRAR
+            </a>
+          </p>
 
-        <p className="mt-6 text-center text-sm text-slate-400">
-          Nao tem conta?{' '}
-          <a className="font-medium text-sky-400 hover:text-sky-300" href="#">
-            Criar conta
-          </a>
-        </p>
-      </section>
-    </main>
+        </div>
+      </div>
+    </div>
   )
 }
 

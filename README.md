@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# DS Catalog — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend de um e-commerce desenvolvido com arquitetura de microsserviços. Interface para navegação de produtos, autenticação de usuários e visualização de detalhes de itens do catálogo.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologias
 
-## React Compiler
+| Camada | Ferramenta |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Bundler | Vite |
+| Estilização | Tailwind CSS v4 |
+| Roteamento | React Router DOM v7 |
+| Requisições HTTP | Axios |
+| Cache / Data Fetching | TanStack Query v5 |
+| Estado Global | Zustand v5 |
+| Formulários | React Hook Form + Zod |
+| Ícones | Lucide React |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Páginas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Rota | Página |
+|---|---|
+| `/` | Login |
+| `/home` | Home |
+| `/ProductCatalog` | Catálogo de Produtos |
+| `/ProductDetails` | Detalhes do Produto |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Como rodar o projeto
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**Pré-requisitos:** Node.js 18+
+
+```bash
+# Instalar dependências
+npm install
+
+# Rodar em desenvolvimento
+npm run dev
+
+# Gerar build de produção
+npm run build
+
+# Visualizar build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Estrutura do projeto
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+  components/   # Componentes reutilizáveis
+  pages/        # Uma página por rota
+  api/          # Funções de requisição com Axios
+  store/        # Stores Zustand (estado global)
+  types/        # Interfaces e tipos TypeScript
+  App.tsx       # Definição das rotas
+  index.css     # Estilos globais + Tailwind
+  main.tsx      # Ponto de entrada
+```
+
+---
+
+## Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto com as variáveis necessárias:
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+> O arquivo `.env` não deve ser commitado. Ele já está no `.gitignore`.

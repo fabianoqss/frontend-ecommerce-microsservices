@@ -1,7 +1,6 @@
 import { useState, type FormEventHandler } from 'react'
+import { Link } from 'react-router-dom'
 
-
-const imgArrow = 'https://www.figma.com/api/mcp/asset/17bbadf7-8042-4dab-892a-1384bf53a18e'
 
 function LoginPage() {
   const [email, setEmail] = useState('')
@@ -99,7 +98,7 @@ function LoginPage() {
             >
               LOGAR
               <div className="absolute right-0 top-0 bottom-0 w-[62px] bg-[rgba(38,50,56,0.5)] rounded-r-[10px] flex items-center justify-center">
-                <img src={imgArrow} alt="" className="w-5 h-5" />
+                <img src="./assets/Seta.svg" alt="" className="w-5 h-5" />
               </div>
             </button>
           </form>
@@ -107,9 +106,9 @@ function LoginPage() {
           {/* Register */}
           <p className="mt-8 text-[18px] font-bold tracking-[-0.27px] text-center">
             <span className="text-[#9e9e9e]">Não tem Cadastro? </span>
-            <a href="#" className="text-[#407bff] underline hover:text-[#3068e0]">
+            <Link to="/register" className="text-[#407bff] underline hover:text-[#3068e0]">
               CADASTRAR
-            </a>
+            </Link>
           </p>
 
         </div>

@@ -1,14 +1,22 @@
-import { useState, type FormEventHandler } from 'react'
+import { type SubmitHandler, useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from 'react-router-dom'
 
+const loginSchema = z.object({
+  email: z.string().email('E-mail com formato inválido'),
+  password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+})
+
+type Inputs = z.infer<typeof loginSchema>
 
 function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
+    resolver: zodResolver(loginSchema),
+  })
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault()
-    console.log('Login:', { email, password })
+  const onSubmitForm: SubmitHandler<Inputs> = (data) => {
+    console.log('Login:', data)
   }
 
   return (
@@ -21,15 +29,9 @@ function LoginPage() {
           DS Catalog
         </span>
         <div className="ml-auto flex items-center gap-10 text-lg">
-          <a href="#" className="text-white font-bold">
-            HOME
-          </a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
-            CATÁLOGO
-          </a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
-            ADMIN
-          </a>
+          <a href="#" className="text-white font-bold">HOME</a>
+          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">CATÁLOGO</a>
+          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</a>
         </div>
       </nav>
 
@@ -55,38 +57,37 @@ function LoginPage() {
             LOGIN
           </h2>
 
-          <form className="w-full space-y-5" onSubmit={handleSubmit}>
+          <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmitForm)} noValidate>
+
             {/* Email */}
-            <div className="border border-[#e1e1e1] rounded-[10px] px-5 py-[14px]">
-              <input
-                id="email"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
-                required
-              />
+            <div>
+              <div className={`border rounded-[10px] px-5 py-[14px] ${errors.email ? 'border-red-400' : 'border-[#e1e1e1]'}`}>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  {...register('email')}
+                  className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
+                />
+              </div>
+              {errors.email && <span className="text-red-500 text-[14px] mt-1 ml-1">{errors.email.message}</span>}
             </div>
 
-            <div className="border border-[#e1e1e1] rounded-[10px] px-5 py-[14px]">
-              <input
-                id="password"
-                type="password"
-                placeholder="Senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
-                required
-              />
+            {/* Senha */}
+            <div>
+              <div className={`border rounded-[10px] px-5 py-[14px] ${errors.password ? 'border-red-400' : 'border-[#e1e1e1]'}`}>
+                <input
+                  type="password"
+                  placeholder="Senha"
+                  {...register('password')}
+                  className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
+                />
+              </div>
+              {errors.password && <span className="text-red-500 text-[14px] mt-1 ml-1">{errors.password.message}</span>}
             </div>
 
             {/* Forgot password */}
             <div className="text-right">
-              <a
-                href="#"
-                className="text-[#407bff] text-[18px] tracking-[-0.27px] hover:underline"
-              >
+              <a href="#" className="text-[#407bff] text-[18px] tracking-[-0.27px] hover:underline">
                 Esqueci a senha?
               </a>
             </div>

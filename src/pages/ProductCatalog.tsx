@@ -1,6 +1,7 @@
-import { Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, ChevronDown, ChevronLeft, ChevronRight, ShoppingCart, Plus } from 'lucide-react'
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from 'react-router-dom';
 
 interface Product {
   id: number
@@ -15,6 +16,8 @@ interface CardProdutoProps {
   price?: string
   cents?: string
   image?: string
+  onClick?: () => void
+  onAddToCart?: (e: React.MouseEvent) => void
 }
 
 const CardProduto = ({
@@ -22,8 +25,17 @@ const CardProduto = ({
   price = '2.779',
   cents = ',00',
   image,
+  onClick,
+  onAddToCart,
 }: CardProdutoProps) => (
-  <div className="bg-white rounded-[10px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[247px] flex flex-col">
+  <div
+    className="bg-white rounded-[10px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[247px] flex flex-col cursor-pointer hover:shadow-lg transition-shadow"
+    onClick={onClick}
+    role="button"
+    tabIndex={0}
+    onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
+    aria-label={`Ver detalhes de ${name}`}
+  >
     {/* Product image */}
     <div className="flex items-center justify-center h-[185px] px-4 pt-4">
       <img src={image} alt={name} className="h-full object-contain" />
@@ -37,10 +49,19 @@ const CardProduto = ({
       <p className="text-[#263238] text-[18px] font-bold tracking-[-0.27px] leading-snug">
         {name}
       </p>
-      <div className="flex items-baseline gap-1 mt-1">
-        <span className="text-[#9e9e9e] text-[18px] tracking-[-0.27px]">R$</span>
-        <span className="text-[#407bff] text-[32px] font-bold tracking-[-0.48px] leading-none">{price}</span>
-        <span className="text-[#407bff] text-[18px] font-bold tracking-[-0.27px]">{cents}</span>
+      <div className="flex items-center justify-between mt-1">
+        <div className="flex items-baseline gap-1">
+          <span className="text-[#9e9e9e] text-[18px] tracking-[-0.27px]">R$</span>
+          <span className="text-[#407bff] text-[32px] font-bold tracking-[-0.48px] leading-none">{price}</span>
+          <span className="text-[#407bff] text-[18px] font-bold tracking-[-0.27px]">{cents}</span>
+        </div>
+        <button
+          onClick={onAddToCart}
+          className="flex items-center justify-center size-[36px] rounded-full bg-[#407bff] text-white hover:bg-[#2563eb] transition-colors flex-shrink-0"
+          aria-label={`Adicionar ${name} ao carrinho`}
+        >
+          <Plus size={20} strokeWidth={2.5} />
+        </button>
       </div>
     </div>
   </div>
@@ -51,6 +72,7 @@ const PAGES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '...', 35]
 
 
 const ProductCatalog = () => {
+  const navigate = useNavigate()
   const [dados, setDados] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -77,9 +99,12 @@ const ProductCatalog = () => {
       <nav className="bg-[#407bff] h-[70px] flex-shrink-0 flex items-center px-10">
         <span className="text-white font-bold text-2xl tracking-[-0.36px]">DS Catalog</span>
         <div className="ml-auto flex items-center gap-10 text-[18px] tracking-[-0.27px]">
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">HOME</a>
-          <a href="#" className="text-white font-bold">CATÁLOGO</a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</a>
+          <Link to="/home" className="text-white/50 font-semibold hover:text-white transition-colors">HOME</Link>
+          <Link to="/ProductCatalog" className="text-white font-bold">CATÁLOGO</Link>
+          <Link to="/admin/products" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</Link>
+          <button className="relative text-white hover:text-white/80 transition-colors" aria-label="Carrinho de compras">
+            <ShoppingCart size={24} />
+          </button>
         </div>
       </nav>
 
@@ -130,6 +155,8 @@ const ProductCatalog = () => {
                 price={intPart}
                 cents={`,${decPart}`}
                 image={product.thumbnail}
+                onClick={() => navigate(`/ProductDetails/${product.id}`)}
+                onAddToCart={(e) => { e.stopPropagation(); console.log('Adicionar ao carrinho:', product.id) }}
               />
             )
           })}

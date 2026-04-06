@@ -1,10 +1,31 @@
-import { ChevronLeft } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { ChevronLeft, ShoppingCart } from 'lucide-react'
+import { useNavigate, useParams, Link } from 'react-router-dom'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 
-const imgProduct = 'https://www.figma.com/api/mcp/asset/20b6c3da-7ec0-4dac-b98f-b3e4e14f664e'
+interface Product {
+  id: number
+  title: string
+  price: number
+  thumbnail: string
+  description: string
+  category: string
+}
 
 const ProductDetails = () => {
   const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
+  const [product, setProduct] = useState<Product | null>(null)
+
+  useEffect(() => {
+    async function carregar() {
+      const { data } = await axios.get(`https://dummyjson.com/products/${id}`)
+      setProduct(data)
+    }
+    carregar()
+  }, [id])
+
+  const [intPart, decPart] = product ? product.price.toFixed(2).split('.') : ['0', '00']
 
   return (
     <div
@@ -15,9 +36,12 @@ const ProductDetails = () => {
       <nav className="bg-[#407bff] h-[70px] flex-shrink-0 flex items-center px-10">
         <span className="text-white font-bold text-2xl tracking-[-0.36px]">DS Catalog</span>
         <div className="ml-auto flex items-center gap-10 text-[18px] tracking-[-0.27px]">
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">HOME</a>
-          <a href="#" className="text-white font-bold">CATÁLOGO</a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</a>
+          <Link to="/home" className="text-white/50 font-semibold hover:text-white transition-colors">HOME</Link>
+          <Link to="/ProductCatalog" className="text-white font-bold">CATÁLOGO</Link>
+          <Link to="/admin/products" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</Link>
+          <button className="relative text-white hover:text-white/80 transition-colors" aria-label="Carrinho de compras">
+            <ShoppingCart size={24} />
+          </button>
         </div>
       </nav>
 
@@ -35,45 +59,42 @@ const ProductDetails = () => {
             VOLTAR
           </button>
 
-          {/* Two-column layout */}
-          <div className="grid grid-cols-2 gap-[67px]">
+          {product && (
+            <div className="grid grid-cols-2 gap-[67px]">
 
-            {/* Left column: image + name + price */}
-            <div className="flex flex-col gap-6">
-              <div className="rounded-[10px] border border-[#e1e1e1] flex items-center justify-center h-[397px] overflow-hidden">
-                <img
-                  src={imgProduct}
-                  alt="Computador Desktop - Intel Core i7"
-                  className="h-full object-contain p-6"
-                />
+              {/* Left column: image + name + price */}
+              <div className="flex flex-col gap-6">
+                <div className="rounded-[10px] border border-[#e1e1e1] flex items-center justify-center h-[397px] overflow-hidden">
+                  <img
+                    src={product.thumbnail}
+                    alt={product.title}
+                    className="h-full object-contain p-6"
+                  />
+                </div>
+
+                <h1 className="font-bold text-[36px] tracking-[-0.54px] text-[#263238] leading-tight">
+                  {product.title}
+                </h1>
+
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[#9e9e9e] text-[28px] tracking-[-0.42px] font-normal">R$</span>
+                  <span className="text-[#407bff] font-bold text-[48px] tracking-[-0.72px] leading-none">{intPart}</span>
+                  <span className="text-[#407bff] font-bold text-[28px] tracking-[-0.42px]">,{decPart}</span>
+                </div>
               </div>
 
-              <h1 className="font-bold text-[36px] tracking-[-0.54px] text-[#263238] leading-tight">
-                Computador Desktop - Intel Core i7
-              </h1>
-
-              <div className="flex items-baseline gap-2">
-                <span className="text-[#9e9e9e] text-[28px] tracking-[-0.42px] font-normal">R$</span>
-                <span className="text-[#407bff] font-bold text-[48px] tracking-[-0.72px] leading-none">2.779</span>
-                <span className="text-[#407bff] font-bold text-[28px] tracking-[-0.42px]">,00</span>
+              {/* Right column: description */}
+              <div className="bg-[#f2f2f2] rounded-[10px] px-[29px] py-[38px]">
+                <h2 className="font-bold text-[24px] tracking-[-0.36px] text-[#9e9e9e] mb-5">
+                  Descrição do Produto
+                </h2>
+                <p className="text-[#9e9e9e] text-[18px] tracking-[-0.27px] leading-relaxed">
+                  {product.description}
+                </p>
               </div>
-            </div>
 
-            {/* Right column: description panel */}
-            <div className="bg-[#f2f2f2] rounded-[10px] px-[29px] py-[38px]">
-              <h2 className="font-bold text-[24px] tracking-[-0.36px] text-[#9e9e9e] mb-5">
-                Descrição do Produto
-              </h2>
-              <p className="text-[#9e9e9e] text-[18px] tracking-[-0.27px] leading-relaxed">
-                Seja um mestre em multitarefas com a capacidade para exibir quatro aplicativos
-                simultâneos na tela. A tela está ficando abarrotada? Crie áreas de trabalho
-                virtuais para obter mais espaço e trabalhar com os itens que você deseja. Além
-                disso, todas as notificações e principais configurações são reunidas em uma única
-                tela de fácil acesso.
-              </p>
             </div>
-
-          </div>
+          )}
         </div>
       </main>
     </div>

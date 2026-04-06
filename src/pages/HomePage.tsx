@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 function HomePage() {
   return (
@@ -12,15 +13,9 @@ function HomePage() {
           DS Catalog
         </span>
         <div className="ml-auto flex items-center gap-10 text-[18px] tracking-[-0.27px]">
-          <a href="#" className="text-white font-bold">
-            HOME
-          </a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
-            CATÁLOGO
-          </a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">
-            ADMIN
-          </a>
+          <Link to="/home" className="text-white font-bold">HOME</Link>
+          <Link to="/ProductCatalog" className="text-white/50 font-semibold hover:text-white transition-colors">CATÁLOGO</Link>
+          <Link to="/admin/products" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</Link>
         </div>
       </nav>
 
@@ -35,14 +30,14 @@ function HomePage() {
             <p className="text-2xl text-[#9e9e9e] leading-normal tracking-[-0.36px]">
               Ajudaremos você a encontrar os melhores produtos disponíveis no mercado.
             </p>
-            <div className="h-[70px] w-[450px] rounded-[10px] bg-[#407bff] flex items-center overflow-hidden cursor-pointer hover:brightness-110 transition-all">
+            <Link to="/ProductCatalog" className="h-[70px] w-[450px] rounded-[10px] bg-[#407bff] flex items-center overflow-hidden hover:brightness-110 transition-all">
               <span className="flex-1 text-white font-bold text-2xl tracking-[-0.36px] text-center pl-4">
                 INICIE AGORA A SUA BUSCA
               </span>
               <div className="bg-[rgba(38,50,56,0.5)] h-full w-[60px] flex items-center justify-center rounded-r-[10px] flex-shrink-0">
                 <ArrowRight size={24} className="text-white" />
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Coluna direita — ilustração */}

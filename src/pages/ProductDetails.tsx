@@ -1,5 +1,6 @@
 import { ChevronLeft, ShoppingCart } from 'lucide-react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
+import { useCartStore } from '../store/cartStore'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
@@ -15,6 +16,7 @@ interface Product {
 const ProductDetails = () => {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
+  const totalItems = useCartStore((state) => state.totalItems())
   const [product, setProduct] = useState<Product | null>(null)
 
   useEffect(() => {
@@ -39,8 +41,13 @@ const ProductDetails = () => {
           <Link to="/home" className="text-white/50 font-semibold hover:text-white transition-colors">HOME</Link>
           <Link to="/ProductCatalog" className="text-white font-bold">CATÁLOGO</Link>
           <Link to="/admin/products" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</Link>
-          <button className="relative text-white hover:text-white/80 transition-colors" aria-label="Carrinho de compras">
+          <button onClick={() => navigate('/cart')} className="relative text-white hover:text-white/80 transition-colors" aria-label="Carrinho de compras">
             <ShoppingCart size={24} />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-bold size-[18px] rounded-full flex items-center justify-center leading-none">
+                {totalItems > 99 ? '99+' : totalItems}
+              </span>
+            )}
           </button>
         </div>
       </nav>

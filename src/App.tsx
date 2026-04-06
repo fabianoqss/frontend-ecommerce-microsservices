@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 import ProductDetails from './pages/ProductDetails'
 import AdminProducts from './pages/AdminProducts'
 import AdminProductForm from './pages/AdminProductForm'
+import CartPage from './pages/CartPage'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/ProductDetails/:id" element={<ProductDetails />} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/new" element={<AdminProductForm />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
     </BrowserRouter>
   )

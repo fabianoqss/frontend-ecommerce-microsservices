@@ -2,6 +2,7 @@ import { Search, ChevronDown, ChevronLeft, ChevronRight, ShoppingCart, Plus } fr
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
+import { useCartStore } from '../store/cartStore';
 
 interface Product {
   id: number
@@ -74,6 +75,7 @@ const PAGES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '...', 35]
 const ProductCatalog = () => {
   const navigate = useNavigate()
   const [dados, setDados] = useState<Product[]>([]);
+  const { addItem, totalItems } = useCartStore()
 
   useEffect(() => {
     async function carregar() {
@@ -102,8 +104,13 @@ const ProductCatalog = () => {
           <Link to="/home" className="text-white/50 font-semibold hover:text-white transition-colors">HOME</Link>
           <Link to="/ProductCatalog" className="text-white font-bold">CATÁLOGO</Link>
           <Link to="/admin/products" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</Link>
-          <button className="relative text-white hover:text-white/80 transition-colors" aria-label="Carrinho de compras">
+          <button onClick={() => navigate('/cart')} className="relative text-white hover:text-white/80 transition-colors" aria-label="Carrinho de compras">
             <ShoppingCart size={24} />
+            {totalItems() > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[11px] font-bold size-[18px] rounded-full flex items-center justify-center leading-none">
+                {totalItems() > 99 ? '99+' : totalItems()}
+              </span>
+            )}
           </button>
         </div>
       </nav>
@@ -156,7 +163,10 @@ const ProductCatalog = () => {
                 cents={`,${decPart}`}
                 image={product.thumbnail}
                 onClick={() => navigate(`/ProductDetails/${product.id}`)}
-                onAddToCart={(e) => { e.stopPropagation(); console.log('Adicionar ao carrinho:', product.id) }}
+                onAddToCart={(e) => {
+                  e.stopPropagation()
+                  addItem({ id: product.id, title: product.title, price: product.price, thumbnail: product.thumbnail })
+                }}
               />
             )
           })}

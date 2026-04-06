@@ -1,22 +1,32 @@
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-const imgProduct = 'https://www.figma.com/api/mcp/asset/9dff1e4e-978e-4bf4-a4f4-bde2998fdfe3'
+interface Product {
+  id: number
+  title: string
+  price: number
+  thumbnail: string
+  category: string
+}
 
 interface CardProdutoProps {
   name?: string
   price?: string
   cents?: string
+  image?: string
 }
 
 const CardProduto = ({
   name = 'Computador Desktop - Intel Core i7',
   price = '2.779',
   cents = ',00',
+  image,
 }: CardProdutoProps) => (
   <div className="bg-white rounded-[10px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.25)] w-[247px] flex flex-col">
     {/* Product image */}
     <div className="flex items-center justify-center h-[185px] px-4 pt-4">
-      <img src={imgProduct} alt={name} className="h-full object-contain" />
+      <img src={image} alt={name} className="h-full object-contain" />
     </div>
 
     {/* Divider */}
@@ -38,8 +48,27 @@ const CardProduto = ({
 
 const PAGES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '...', 35]
 
+
+
 const ProductCatalog = () => {
+  const [dados, setDados] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function carregar() {
+      const categories = ['laptops', 'smartphones', 'tablets', 'mobile-accessories']
+      const responses = await Promise.all(
+        categories.map((cat) => axios.get(`https://dummyjson.com/products/category/${cat}?limit=20`))
+      )
+      const allProducts = responses.flatMap((res) => res.data.products)
+      setDados(allProducts)
+    }
+
+    carregar();
+  }, []);
+
   return (
+
+    
     <div
       className="min-h-screen bg-[#f2f2f2] text-[#263238]"
       style={{ fontFamily: "'Open Sans', sans-serif" }}
@@ -92,9 +121,18 @@ const ProductCatalog = () => {
 
         {/* Product grid */}
         <div className="grid grid-cols-4 gap-[30px]">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <CardProduto key={i} />
-          ))}
+          {dados.map((product) => {
+            const [intPart, decPart] = product.price.toFixed(2).split('.')
+            return (
+              <CardProduto
+                key={product.id}
+                name={product.title}
+                price={intPart}
+                cents={`,${decPart}`}
+                image={product.thumbnail}
+              />
+            )
+          })}
         </div>
 
         {/* Pagination */}

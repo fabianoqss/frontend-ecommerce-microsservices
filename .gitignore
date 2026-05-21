@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Local-only assistant/config files
+AGENTS.md
+CLAUDE.md
+tailwind.config.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -6,7 +6,6 @@ import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { registerRequest } from '../api/authApi'
-import { useAuthStore } from '../store/authStore'
 
 const registerSchema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -26,7 +25,6 @@ type Inputs = z.infer<typeof registerSchema>
 
 const RegisterPage = () => {
   const navigate = useNavigate()
-  const login = useAuthStore((state) => state.login)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const { register, handleSubmit, control, trigger, formState: { errors } } = useForm<Inputs>({
@@ -45,9 +43,8 @@ const RegisterPage = () => {
 
   const registerMutation = useMutation({
     mutationFn: registerRequest,
-    onSuccess: (data) => {
-      login({ name: data.name, email: data.email, role: data.role }, data.token)
-      navigate('/ProductCatalog')
+    onSuccess: () => {
+      navigate('/')
     },
   })
 

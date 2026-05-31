@@ -1,7 +1,10 @@
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { Link, useNavigate } from 'react-router-dom'
+import { loginRequest } from '../api/authApi'
+import { useAuthStore } from '../store/authStore'
 
 const loginSchema = z.object({
   email: z.string().email('E-mail com formato inválido'),
@@ -11,12 +14,22 @@ const loginSchema = z.object({
 type Inputs = z.infer<typeof loginSchema>
 
 function LoginPage() {
+  const navigate = useNavigate()
+  const login = useAuthStore((state) => state.login)
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
     resolver: zodResolver(loginSchema),
   })
 
+  const loginMutation = useMutation({
+    mutationFn: loginRequest,
+    onSuccess: (data) => {
+      login({ name: data.name, email: data.email, role: data.role }, data.token)
+      navigate('/ProductCatalog')
+    },
+  })
+
   const onSubmitForm: SubmitHandler<Inputs> = (data) => {
-    console.log('Login:', data)
+    loginMutation.mutate(data)
   }
 
   return (
@@ -58,6 +71,25 @@ function LoginPage() {
           </h2>
 
           <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmitForm)} noValidate>
+            {loginMutation.isError && (
+              <div className="rounded-[10px] border border-red-400 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {(() => {
+                  const err = loginMutation.error as any
+                  if (err?.response?.data) {
+                    if (err.response.data.error) {
+                      return err.response.data.error
+                    }
+                    if (typeof err.response.data === 'object') {
+                      const firstFieldErr = Object.values(err.response.data)[0]
+                      if (typeof firstFieldErr === 'string') {
+                        return firstFieldErr
+                      }
+                    }
+                  }
+                  return 'Não foi possível fazer login. Confira seu e-mail e senha.'
+                })()}
+              </div>
+            )}
 
             {/* Email */}
             <div>
@@ -95,11 +127,12 @@ function LoginPage() {
             {/* Submit */}
             <button
               type="submit"
-              className="relative w-full bg-[#407bff] hover:bg-[#3068e0] active:bg-[#2558c8] transition-colors rounded-[10px] h-[62px] flex items-center justify-center text-white font-bold text-2xl tracking-[-0.36px] mt-4"
+              disabled={loginMutation.isPending}
+              className="relative w-full cursor-pointer bg-[#407bff] hover:bg-[#3068e0] active:bg-[#2558c8] transition-colors rounded-[10px] h-[62px] flex items-center justify-center text-white font-bold text-2xl tracking-[-0.36px] mt-4 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              LOGAR
+              {loginMutation.isPending ? 'ENTRANDO...' : 'LOGAR'}
               <div className="absolute right-0 top-0 bottom-0 w-[62px] bg-[rgba(38,50,56,0.5)] rounded-r-[10px] flex items-center justify-center">
-                <img src="./assets/Seta.svg" alt="" className="w-5 h-5" />
+                <img src="/assets/Seta.svg" alt="" className="w-5 h-5" />
               </div>
             </button>
           </form>
@@ -107,7 +140,7 @@ function LoginPage() {
           {/* Register */}
           <p className="mt-8 text-[18px] font-bold tracking-[-0.27px] text-center">
             <span className="text-[#9e9e9e]">Não tem Cadastro? </span>
-            <Link to="/register" className="text-[#407bff] underline hover:text-[#3068e0]">
+            <Link to="/register" className="cursor-pointer text-[#407bff] underline hover:text-[#3068e0]">
               CADASTRAR
             </Link>
           </p>

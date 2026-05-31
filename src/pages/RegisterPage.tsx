@@ -1,13 +1,22 @@
-import { type SubmitHandler, useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import { type SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { Link, useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
+import { registerRequest } from '../api/authApi'
+import { useAuthStore } from '../store/authStore'
 
 const registerSchema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
   email: z.string().email('E-mail com formato inválido'),
-  password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
-  confirmPassword: z.string(),
+  password: z.string()
+    .min(8, 'Senha deve ter pelo menos 8 caracteres')
+    .regex(/[A-Z]/, 'Senha deve conter pelo menos 1 letra maiúscula')
+    .regex(/[a-z]/, 'Senha deve conter pelo menos 1 letra minúscula')
+    .regex(/[\d\W_]/, 'Senha deve conter número ou caractere especial'),
+  confirmPassword: z.string().min(1, 'Confirme sua senha'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'As senhas não coincidem',
   path: ['confirmPassword'],
@@ -16,12 +25,38 @@ const registerSchema = z.object({
 type Inputs = z.infer<typeof registerSchema>
 
 const RegisterPage = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
+  const navigate = useNavigate()
+  const login = useAuthStore((state) => state.login)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const { register, handleSubmit, control, trigger, formState: { errors } } = useForm<Inputs>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+  })
+  const password = useWatch({ control, name: 'password' })
+  const confirmPassword = useWatch({ control, name: 'confirmPassword' })
+
+  useEffect(() => {
+    if (confirmPassword) {
+      void trigger('confirmPassword')
+    }
+  }, [password, confirmPassword, trigger])
+
+  const registerMutation = useMutation({
+    mutationFn: registerRequest,
+    onSuccess: (data) => {
+      login({ name: data.name, email: data.email, role: data.role }, data.token)
+      navigate('/ProductCatalog')
+    },
   })
 
   const onSubmitForm: SubmitHandler<Inputs> = (data) => {
-    console.log(data)
+    registerMutation.mutate({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    })
   }
 
   return (
@@ -65,6 +100,25 @@ const RegisterPage = () => {
           </h2>
 
           <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmitForm)} noValidate>
+            {registerMutation.isError && (
+              <div className="rounded-[10px] border border-red-400 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {(() => {
+                  const err = registerMutation.error as any
+                  if (err?.response?.data) {
+                    if (err.response.data.error) {
+                      return err.response.data.error
+                    }
+                    if (typeof err.response.data === 'object') {
+                      const firstFieldErr = Object.values(err.response.data)[0]
+                      if (typeof firstFieldErr === 'string') {
+                        return firstFieldErr
+                      }
+                    }
+                  }
+                  return 'Não foi possível concluir o cadastro. Confira os dados informados.'
+                })()}
+              </div>
+            )}
 
             {/* Nome */}
             <div>
@@ -94,41 +148,58 @@ const RegisterPage = () => {
 
             {/* Senha */}
             <div>
-              <div className={`border rounded-[10px] px-5 py-[14px] ${errors.password ? 'border-red-400' : 'border-[#e1e1e1]'}`}>
+              <div className={`flex items-center gap-3 border rounded-[10px] px-5 py-[14px] ${errors.password ? 'border-red-400' : 'border-[#e1e1e1]'}`}>
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Senha"
                   {...register('password')}
                   className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
                 />
+                <button
+                  type="button"
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="cursor-pointer text-[#9e9e9e] transition-colors hover:text-[#407bff] focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+                >
+                  {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                </button>
               </div>
               {errors.password && <span className="text-red-500 text-[14px] mt-1 ml-1">{errors.password.message}</span>}
             </div>
 
             {/* Confirmar senha */}
             <div>
-              <div className={`border rounded-[10px] px-5 py-[14px] ${errors.confirmPassword ? 'border-red-400' : 'border-[#e1e1e1]'}`}>
+              <div className={`flex items-center gap-3 border rounded-[10px] px-5 py-[14px] ${errors.confirmPassword ? 'border-red-400' : 'border-[#e1e1e1]'}`}>
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Confirmar senha"
                   {...register('confirmPassword')}
                   className="w-full text-[#263238] text-[18px] tracking-[-0.27px] outline-none bg-transparent placeholder:text-[#9e9e9e]"
                 />
+                <button
+                  type="button"
+                  aria-label={showConfirmPassword ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'}
+                  onClick={() => setShowConfirmPassword((current) => !current)}
+                  className="cursor-pointer text-[#9e9e9e] transition-colors hover:text-[#407bff] focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+                >
+                  {showConfirmPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                </button>
               </div>
               {errors.confirmPassword && <span className="text-red-500 text-[14px] mt-1 ml-1">{errors.confirmPassword.message}</span>}
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#407bff] hover:bg-[#3068e0] active:bg-[#2558c8] transition-colors rounded-[10px] h-[62px] flex items-center justify-center text-white font-bold text-2xl tracking-[-0.36px] mt-4"
+              disabled={registerMutation.isPending}
+              className="w-full cursor-pointer bg-[#407bff] hover:bg-[#3068e0] active:bg-[#2558c8] transition-colors rounded-[10px] h-[62px] flex items-center justify-center text-white font-bold text-2xl tracking-[-0.36px] mt-4 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              CADASTRAR
+              {registerMutation.isPending ? 'CADASTRANDO...' : 'CADASTRAR'}
             </button>
           </form>
 
           <p className="mt-8 text-[18px] font-bold tracking-[-0.27px] text-center">
             <span className="text-[#9e9e9e]">Já tem cadastro? </span>
-            <Link to="/" className="text-[#407bff] underline hover:text-[#3068e0]">
+            <Link to="/" className="cursor-pointer text-[#407bff] underline hover:text-[#3068e0]">
               LOGAR
             </Link>
           </p>

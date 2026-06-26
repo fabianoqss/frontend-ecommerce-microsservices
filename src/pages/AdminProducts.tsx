@@ -1,15 +1,7 @@
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-
-interface Product {
-  id: number
-  title: string
-  price: number
-  thumbnail: string
-  category: string
-}
+import { getAllProducts, deleteProduct, type Product } from '../api/productApi'
 
 const PAGES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '...', 35]
 
@@ -18,15 +10,14 @@ const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
-    async function carregar() {
-      const categories = ['laptops', 'smartphones', 'tablets', 'mobile-accessories']
-      const responses = await Promise.all(
-        categories.map((cat) => axios.get(`https://dummyjson.com/products/category/${cat}?limit=20`))
-      )
-      setProducts(responses.flatMap((res) => res.data.products))
-    }
-    carregar()
+    getAllProducts().then(setProducts)
   }, [])
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Deseja excluir "${name}"?`)) return
+    await deleteProduct(id)
+    setProducts((prev) => prev.filter((p) => p.id !== id))
+  }
 
   return (
     <div
@@ -110,7 +101,7 @@ const AdminProducts = () => {
                 >
                   {/* Image */}
                   <div className="w-[148px] flex items-center justify-center p-4 flex-shrink-0">
-                    <img src={product.thumbnail} alt={product.title} className="h-full object-contain" />
+                    <img src={product.imageUrl} alt={product.name} className="h-full object-contain" />
                   </div>
 
                   {/* Divider */}
@@ -119,7 +110,7 @@ const AdminProducts = () => {
                   {/* Info */}
                   <div className="flex-1 px-6 py-4 flex flex-col justify-center gap-2">
                     <p className="font-bold text-[18px] text-[#263238] tracking-[-0.27px] leading-snug">
-                      {product.title}
+                      {product.name}
                     </p>
                     <div className="flex items-baseline gap-1">
                       <span className="text-[#9e9e9e] text-[14px] tracking-[-0.21px]">R$</span>
@@ -136,14 +127,16 @@ const AdminProducts = () => {
                   {/* Actions */}
                   <div className="flex flex-col items-stretch justify-center gap-3 px-6 flex-shrink-0 w-[200px]">
                     <button
+                      onClick={() => navigate(`/admin/products/${product.id}/edit`)}
                       className="border border-[#e1e1e1] rounded-[6px] py-2 px-4 font-bold text-[14px] text-[#9e9e9e] tracking-[-0.21px] hover:border-[#407bff] hover:text-[#407bff] transition-colors"
-                      aria-label={`Editar ${product.title}`}
+                      aria-label={`Editar ${product.name}`}
                     >
                       EDITAR
                     </button>
                     <button
+                      onClick={() => handleDelete(product.id, product.name)}
                       className="border border-[#df5753] rounded-[6px] py-2 px-4 font-bold text-[14px] text-[#df5753] tracking-[-0.21px] hover:bg-[#df5753] hover:text-white transition-colors"
-                      aria-label={`Excluir ${product.title}`}
+                      aria-label={`Excluir ${product.name}`}
                     >
                       EXCLUIR
                     </button>

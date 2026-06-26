@@ -1,18 +1,18 @@
 import { create } from 'zustand'
 
 interface CartItem {
-  id: number
-  title: string
+  id: string
+  name: string
   price: number
-  thumbnail: string
+  imageUrl: string
   quantity: number
 }
 
 interface CartStore {
   items: CartItem[]
   addItem: (product: Omit<CartItem, 'quantity'>) => void
-  removeItem: (id: number) => void
-  updateQuantity: (id: number, quantity: number) => void
+  removeItem: (id: string) => void
+  updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
   totalItems: () => number
 }

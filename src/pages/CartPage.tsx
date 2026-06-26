@@ -69,7 +69,7 @@ const CartPage = () => {
                   >
                     {/* Image */}
                     <div className="w-[120px] flex items-center justify-center p-3 flex-shrink-0">
-                      <img src={item.thumbnail} alt={item.title} className="h-full object-contain" />
+                      <img src={item.imageUrl} alt={item.name} className="h-full object-contain" />
                     </div>
 
                     {/* Divider */}
@@ -78,7 +78,7 @@ const CartPage = () => {
                     {/* Info */}
                     <div className="flex-1 px-5 py-4 flex flex-col justify-between">
                       <p className="font-bold text-[16px] text-[#263238] tracking-[-0.24px] leading-snug line-clamp-2">
-                        {item.title}
+                        {item.name}
                       </p>
                       <div className="flex items-center gap-3">
                         <button
@@ -95,7 +95,7 @@ const CartPage = () => {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => addItem({ id: item.id, title: item.title, price: item.price, thumbnail: item.thumbnail })}
+                          onClick={() => addItem({ id: item.id, name: item.name, price: item.price, imageUrl: item.imageUrl })}
                           className="size-[32px] rounded-full bg-[#407bff] hover:bg-[#2563eb] text-white flex items-center justify-center transition-colors"
                           aria-label="Aumentar quantidade"
                         >
@@ -109,7 +109,7 @@ const CartPage = () => {
                       <button
                         onClick={() => removeItem(item.id)}
                         className="size-[36px] rounded-[6px] bg-[#df5753] hover:bg-[#c0392b] text-white flex items-center justify-center transition-colors"
-                        aria-label={`Remover ${item.title} do carrinho`}
+                        aria-label={`Remover ${item.name} do carrinho`}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -133,7 +133,7 @@ const CartPage = () => {
                   {items.map((item) => (
                     <div key={item.id} className="flex items-center justify-between text-[14px]">
                       <span className="text-[#263238] tracking-[-0.21px] line-clamp-1 flex-1 mr-2">
-                        {item.title} <span className="text-[#9e9e9e]">x{item.quantity}</span>
+                        {item.name} <span className="text-[#9e9e9e]">x{item.quantity}</span>
                       </span>
                       <span className="text-[#407bff] font-bold whitespace-nowrap">
                         R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}

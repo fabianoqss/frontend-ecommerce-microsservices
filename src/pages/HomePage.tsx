@@ -7,16 +7,10 @@ function HomePage() {
       className="h-screen flex flex-col bg-[#f2f2f2] overflow-hidden"
       style={{ fontFamily: "'Open Sans', sans-serif" }}
     >
-      {/* Navbar */}
       <nav className="bg-[#407bff] h-[70px] flex-shrink-0 flex items-center px-10">
         <span className="text-white font-bold text-2xl tracking-[-0.36px]">
           DS Catalog
         </span>
-        <div className="ml-auto flex items-center gap-10 text-[18px] tracking-[-0.27px]">
-          <Link to="/home" className="text-white font-bold">HOME</Link>
-          <Link to="/ProductCatalog" className="text-white/50 font-semibold hover:text-white transition-colors">CATÁLOGO</Link>
-          <Link to="/admin/products" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</Link>
-        </div>
       </nav>
 
       <main className="flex-1 px-10 py-8 min-h-0">
@@ -30,7 +24,7 @@ function HomePage() {
             <p className="text-2xl text-[#9e9e9e] leading-normal tracking-[-0.36px]">
               Ajudaremos você a encontrar os melhores produtos disponíveis no mercado.
             </p>
-            <Link to="/ProductCatalog" className="h-[70px] w-[450px] rounded-[10px] bg-[#407bff] flex items-center overflow-hidden hover:brightness-110 transition-all">
+            <Link to="/" className="h-[70px] w-[450px] rounded-[10px] bg-[#407bff] flex items-center overflow-hidden hover:brightness-110 transition-all">
               <span className="flex-1 text-white font-bold text-2xl tracking-[-0.36px] text-center pl-4">
                 INICIE AGORA A SUA BUSCA
               </span>

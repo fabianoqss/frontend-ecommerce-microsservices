@@ -41,11 +41,6 @@ function LoginPage() {
         <span className="text-white font-bold text-2xl tracking-[-0.36px]">
           DS Catalog
         </span>
-        <div className="ml-auto flex items-center gap-10 text-lg">
-          <a href="#" className="text-white font-bold">HOME</a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">CATÁLOGO</a>
-          <a href="#" className="text-white/50 font-semibold hover:text-white transition-colors">ADMIN</a>
-        </div>
       </nav>
 
       <div className="flex items-center justify-between gap-12 px-[140px] py-12 min-h-[calc(100vh-70px)]">

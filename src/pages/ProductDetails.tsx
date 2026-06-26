@@ -1,30 +1,18 @@
 import { ChevronLeft, ShoppingCart } from 'lucide-react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { useCartStore } from '../store/cartStore'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
-
-interface Product {
-  id: number
-  title: string
-  price: number
-  thumbnail: string
-  description: string
-  category: string
-}
+import { getProductById, type Product } from '../api/productApi'
 
 const ProductDetails = () => {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const totalItems = useCartStore((state) => state.totalItems())
+  const addItem = useCartStore((state) => state.addItem)
   const [product, setProduct] = useState<Product | null>(null)
 
   useEffect(() => {
-    async function carregar() {
-      const { data } = await axios.get(`https://dummyjson.com/products/${id}`)
-      setProduct(data)
-    }
-    carregar()
+    if (id) getProductById(id).then(setProduct)
   }, [id])
 
   const [intPart, decPart] = product ? product.price.toFixed(2).split('.') : ['0', '00']
@@ -73,14 +61,14 @@ const ProductDetails = () => {
               <div className="flex flex-col gap-6">
                 <div className="rounded-[10px] border border-[#e1e1e1] flex items-center justify-center h-[397px] overflow-hidden">
                   <img
-                    src={product.thumbnail}
-                    alt={product.title}
+                    src={product.imageUrl}
+                    alt={product.name}
                     className="h-full object-contain p-6"
                   />
                 </div>
 
                 <h1 className="font-bold text-[36px] tracking-[-0.54px] text-[#263238] leading-tight">
-                  {product.title}
+                  {product.name}
                 </h1>
 
                 <div className="flex items-baseline gap-2">
@@ -88,6 +76,14 @@ const ProductDetails = () => {
                   <span className="text-[#407bff] font-bold text-[48px] tracking-[-0.72px] leading-none">{intPart}</span>
                   <span className="text-[#407bff] font-bold text-[28px] tracking-[-0.42px]">,{decPart}</span>
                 </div>
+
+                <button
+                  onClick={() => addItem({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl })}
+                  className="bg-[#407bff] text-white font-bold text-[18px] tracking-[-0.27px] h-[50px] rounded-[10px] hover:bg-[#2563eb] transition-colors"
+                  aria-label={`Adicionar ${product.name} ao carrinho`}
+                >
+                  ADICIONAR AO CARRINHO
+                </button>
               </div>
 
               {/* Right column: description */}
